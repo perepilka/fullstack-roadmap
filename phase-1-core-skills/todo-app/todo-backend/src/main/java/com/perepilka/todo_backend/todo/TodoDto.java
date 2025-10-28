@@ -10,6 +10,16 @@ public class TodoDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
+    public static TodoDto fromEntity(Todo todo) {
+        TodoDto dto = new TodoDto();
+        dto.setId(todo.getId());
+        dto.setTitle(todo.getTitle());
+        dto.setCompleted(todo.isCompleted());
+        dto.setCreatedAt(todo.getCreatedAt());
+        dto.setUpdatedAt(todo.getUpdatedAt());
+        return dto;
+    }
+
     public Long getId() {
         return id;
     }
