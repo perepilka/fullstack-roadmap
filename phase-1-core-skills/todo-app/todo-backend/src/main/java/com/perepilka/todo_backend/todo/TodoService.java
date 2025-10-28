@@ -1,12 +1,11 @@
 package com.perepilka.todo_backend.todo;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TodoService {
 
-    private TodoRepository todoRepository;
+    private final TodoRepository todoRepository;
 
     TodoService(TodoRepository todoRepository) {
         this.todoRepository = todoRepository;
