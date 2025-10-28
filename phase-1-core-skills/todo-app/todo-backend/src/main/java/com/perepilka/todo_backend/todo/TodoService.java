@@ -17,7 +17,7 @@ public class TodoService {
      * @return The found Todo entity
      * @throws TodoNotFoundException if the todo is not found
      */
-    public Todo getTodoById(long id) {
+    public Todo getTodoById(Long id) {
         return todoRepository.findById(id)
                 .orElseThrow(() -> new TodoNotFoundException(id));
     }
