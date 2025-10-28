@@ -16,6 +16,13 @@ public class TodoController {
         this.todoService = todoService;
     }
 
+    /**
+     * Handles HTTP GET requests to retrieve a Todo item by its ID.
+     *
+     * @param id the ID of the Todo item to retrieve, provided as a path variable
+     * @return a ResponseEntity containing the TodoDto representation of the Todo item
+     *         if found, or an appropriate HTTP status code if not found
+     */
     @GetMapping("/{id}")
     public ResponseEntity<TodoDto> getTodoById(@PathVariable Long id){
 
