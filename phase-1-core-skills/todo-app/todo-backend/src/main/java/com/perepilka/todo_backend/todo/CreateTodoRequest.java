@@ -5,7 +5,7 @@ import jakarta.validation.constraints.Size;
 
 public class CreateTodoRequest {
 
-    @NotBlank
+    @NotBlank(message = "Title cannot be blank!")
     @Size(max = 255)
     private String title;
 
