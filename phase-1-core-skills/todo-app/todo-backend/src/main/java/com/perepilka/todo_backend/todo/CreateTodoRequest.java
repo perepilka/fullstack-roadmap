@@ -3,7 +3,7 @@ package com.perepilka.todo_backend.todo;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
-public class TodoCreateRequest {
+public class CreateTodoRequest {
 
     @NotBlank
     @Size(max = 255)
