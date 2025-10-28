@@ -17,7 +17,7 @@ public class TodoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TodoDto> getTodoById(@PathVariable Long id) throws Exception {
+    public ResponseEntity<TodoDto> getTodoById(@PathVariable Long id){
 
         Todo todo = todoService.getTodoById(id);
 
