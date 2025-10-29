@@ -1,10 +1,11 @@
 package com.perepilka.todo_backend.todo;
 
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
 @RequestMapping("/api/v1/todos")
@@ -30,6 +31,19 @@ public class TodoController {
 
         return ResponseEntity.ok(TodoDto.fromEntity(todo));
 
+    }
+
+    @PostMapping
+    public ResponseEntity<TodoDto> createTodo(@Valid @RequestBody CreateTodoRequest createTodoRequest) {
+        Todo savedTodo = todoService.createTodo(createTodoRequest);
+
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(savedTodo.getId())
+                .toUri();
+
+        return ResponseEntity.created(location).body(TodoDto.fromEntity(savedTodo));
     }
 
 }
