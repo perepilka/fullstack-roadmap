@@ -56,4 +56,11 @@ public class TodoController {
         return ResponseEntity.ok(todoDtos);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<TodoDto> updateTodo(@PathVariable Long id, @Valid @RequestBody UpdateTodoRequest updateTodoRequest){
+        Todo updatedTodo = todoService.updateTodo(id, updateTodoRequest);
+
+        return ResponseEntity.ok(TodoDto.fromEntity(updatedTodo));
+    }
+
 }
