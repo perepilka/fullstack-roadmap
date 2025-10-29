@@ -49,6 +49,16 @@ public class TodoService {
         return todoRepository.findAll();
     }
 
+    /**
+     * Updates an existing Todo entity.
+     * This method retrieves a Todo by its ID, updates its title and completion status
+     * based on the provided UpdateTodoRequest, and saves the changes to the repository.
+     *
+     * @param id the ID of the Todo to update
+     * @param updateTodoRequest request object containing the updated title and completion status
+     * @return the updated Todo entity
+     * @throws TodoNotFoundException if the Todo with the specified ID does not exist
+     */
     public Todo updateTodo(Long id, UpdateTodoRequest updateTodoRequest) {
         //throws exception if todo does not exist
         Todo todoToUpdate = getTodoById(id);
