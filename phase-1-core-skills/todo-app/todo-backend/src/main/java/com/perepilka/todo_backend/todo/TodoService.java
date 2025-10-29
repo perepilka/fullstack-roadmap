@@ -2,6 +2,8 @@ package com.perepilka.todo_backend.todo;
 
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TodoService {
 
@@ -34,6 +36,17 @@ public class TodoService {
         Todo todo = new Todo();
         todo.setTitle(createTodoRequest.getTitle());
         return todoRepository.save(todo);
+    }
+
+    /**
+     * Retrieves all Todo entities from the repository.
+     * This method fetches and returns a list of all Todo objects
+     * currently stored in the database.
+     *
+     * @return a list of all Todo entities
+     */
+    public List<Todo> getAllTodos() {
+        return todoRepository.findAll();
     }
 
 }
