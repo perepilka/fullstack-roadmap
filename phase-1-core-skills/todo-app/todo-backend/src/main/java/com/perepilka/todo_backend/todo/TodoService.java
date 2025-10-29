@@ -22,4 +22,18 @@ public class TodoService {
                 .orElseThrow(() -> new TodoNotFoundException(id));
     }
 
+    /**
+     * Creates and saves a new Todo entity.
+     * This method constructs a new Todo from the supplied CreateTodoRequest,
+     * sets its title, and persists it using the TodoRepository.
+     *
+     * @param createTodoRequest request object containing data for the new todo (must provide a title)
+     * @return the persisted Todo entity with any generated fields populated (e.g. id)
+     */
+    public Todo saveTodo(CreateTodoRequest createTodoRequest) {
+        Todo todo = new Todo();
+        todo.setTitle(createTodoRequest.getTitle());
+        return todoRepository.save(todo);
+    }
+
 }
