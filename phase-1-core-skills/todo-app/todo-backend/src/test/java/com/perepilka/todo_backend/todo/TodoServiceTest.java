@@ -134,6 +134,33 @@ public class TodoServiceTest {
         verify(todoRepository, never()).save(any(Todo.class));
     }
 
+    @Test
+    void whenDeleteTodo_andTodoExists_thenDeletes() {
+        Long todoId = 1L;
+
+        when(todoRepository.findById(anyLong())).thenReturn(Optional.of(new Todo()));
+
+        doNothing().when(todoRepository).deleteById(todoId);
+
+        todoService.deleteTodo(todoId);
+
+        verify(todoRepository).findById(todoId);
+        verify(todoRepository).deleteById(todoId);
+    }
+
+    @Test
+    void whenDeleteTodo_andTodoDoesNotExist_thenThrowsException() {
+        Long todoId = 404L;
+
+        when(todoRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(TodoNotFoundException.class, () -> {
+            todoService.deleteTodo(todoId);
+        });
+
+        verify(todoRepository, never()).deleteById(anyLong());
+    }
+
 }
 
 
