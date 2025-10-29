@@ -69,4 +69,9 @@ public class TodoService {
         return todoRepository.save(todoToUpdate);
     }
 
+    public void deleteTodo(Long id) {
+        getTodoById(id);
+        todoRepository.deleteById(id);
+    }
+
 }
