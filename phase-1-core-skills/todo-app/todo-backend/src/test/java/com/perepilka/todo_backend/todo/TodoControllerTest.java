@@ -87,6 +87,7 @@ public class TodoControllerTest {
                 .andExpect(jsonPath("$.completed").value(false));
     }
 
+    @Test
     void whenSaveTodo_withInvalidRequest_thenReturnsBadRequest() throws Exception {
 
         CreateTodoRequest createTodoRequest = new CreateTodoRequest();
