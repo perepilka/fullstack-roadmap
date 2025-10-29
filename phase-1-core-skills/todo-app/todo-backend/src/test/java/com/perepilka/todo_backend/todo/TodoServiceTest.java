@@ -10,7 +10,9 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -45,6 +47,26 @@ public class TodoServiceTest {
                     todoService.getTodoById(404L);
                 });
 
+    }
+
+    @Test
+    void whenSaveTodo_thenSavesAndReturnsTodo() {
+        CreateTodoRequest createTodoRequest = new CreateTodoRequest();
+        createTodoRequest.setTitle("Todo Title");
+
+        Todo mockTodo = new Todo();
+        mockTodo.setId(1L);
+        mockTodo.setTitle("Todo Title");
+
+        when(todoRepository.save(any(Todo.class))).thenReturn(mockTodo);
+
+        Todo createdTodo = todoService.createTodo(createTodoRequest);
+
+        assertThat(createdTodo).isNotNull();
+        assertThat(createdTodo.getId()).isEqualTo(1L);
+        assertThat(createdTodo.getTitle()).isEqualTo("Todo Title");
+
+        verify(todoRepository).save(any(Todo.class));
     }
 
 
