@@ -1,6 +1,7 @@
 package com.perepilka.todo_backend.todo;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class UpdateTodoRequest {
@@ -8,7 +9,7 @@ public class UpdateTodoRequest {
     @NotBlank(message = "Title cannot be blank!")
     @Size(max = 255)
     private String title;
-    @NotBlank(message = "Completed status cannot be blank!")
+    @NotNull(message = "Completed status cannot be null!")
     private Boolean completed;
 
     public String getTitle() {
