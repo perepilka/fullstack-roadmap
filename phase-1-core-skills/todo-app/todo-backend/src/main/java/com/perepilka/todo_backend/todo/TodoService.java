@@ -30,7 +30,7 @@ public class TodoService {
      * @param createTodoRequest request object containing data for the new todo (must provide a title)
      * @return the persisted Todo entity with any generated fields populated (e.g. id)
      */
-    public Todo saveTodo(CreateTodoRequest createTodoRequest) {
+    public Todo createTodo(CreateTodoRequest createTodoRequest) {
         Todo todo = new Todo();
         todo.setTitle(createTodoRequest.getTitle());
         return todoRepository.save(todo);
