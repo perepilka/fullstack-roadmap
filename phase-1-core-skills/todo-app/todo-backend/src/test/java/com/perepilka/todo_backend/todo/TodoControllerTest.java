@@ -16,7 +16,7 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -177,6 +177,25 @@ public class TodoControllerTest {
         mockMvc.perform(put("/api/v1/todos/{id}", todoId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateTodoRequest)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void whenDeleteTodo_withValidRequest_thenDeletesTodo() throws Exception {
+        Long todoId = 1L;
+        doNothing().when(todoService).deleteTodo(todoId);
+
+        mockMvc.perform(delete("/api/v1/todos/{id}", todoId))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void whenDeleteTodo_withInvalidRequest_thenReturnsNotFound() throws Exception {
+        Long todoId = 404L;
+
+        doThrow(new TodoNotFoundException(todoId)).when(todoService).deleteTodo(todoId);
+
+        mockMvc.perform(delete("/api/v1/todos/{id}", todoId))
                 .andExpect(status().isNotFound());
     }
 
