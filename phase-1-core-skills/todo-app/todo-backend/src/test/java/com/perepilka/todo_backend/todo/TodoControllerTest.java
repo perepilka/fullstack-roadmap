@@ -15,9 +15,9 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -125,6 +125,59 @@ public class TodoControllerTest {
                 .andExpect(jsonPath("$[0].title").value("Todo 1"))
                 .andExpect(jsonPath("$[1].id").value(2L))
                 .andExpect(jsonPath("$[1].title").value("Todo 2"));
+    }
+
+    @Test
+    void whenUpdateTodo_withValidRequest_thenReturns() throws Exception {
+        Long todoId = 1L;
+        UpdateTodoRequest updateTodoRequest = new UpdateTodoRequest();
+        updateTodoRequest.setTitle("Updated title");
+        updateTodoRequest.setCompleted(true);
+
+        Todo updatedTodo = new Todo();
+        updatedTodo.setId(todoId);
+        updatedTodo.setTitle("Updated title");
+        updatedTodo.setCompleted(true);
+        updatedTodo.setCreatedAt(LocalDateTime.now().minusDays(1));
+        updatedTodo.setUpdatedAt(LocalDateTime.now());
+
+        when(todoService.updateTodo(anyLong(), any(UpdateTodoRequest.class))).thenReturn(updatedTodo);
+
+        mockMvc.perform(put("/api/v1/todos/{id}", todoId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateTodoRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(todoId))
+                .andExpect(jsonPath("$.title").value("Updated title"))
+                .andExpect(jsonPath("$.completed").value(true));
+    }
+
+    @Test
+    void whenUpdateTodo_withInvalidRequest_thenReturnsBadRequest() throws Exception {
+        Long todoId = 1L;
+        UpdateTodoRequest updateTodoRequest = new UpdateTodoRequest();
+        updateTodoRequest.setTitle("");
+        updateTodoRequest.setCompleted(null);
+
+        mockMvc.perform(put("/api/v1/todos/{id}", todoId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateTodoRequest)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void whenUpdateTodo_andTodoDoesNotExist__thenReturnsNotFound() throws Exception {
+        Long todoId = 404L;
+        UpdateTodoRequest updateTodoRequest = new UpdateTodoRequest();
+        updateTodoRequest.setTitle("Updated title");
+        updateTodoRequest.setCompleted(true);
+
+        when(todoService.updateTodo(anyLong(), any(UpdateTodoRequest.class))).thenThrow(new TodoNotFoundException(todoId));
+
+        mockMvc.perform(put("/api/v1/todos/{id}", todoId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateTodoRequest)))
+                .andExpect(status().isNotFound());
     }
 
 }
