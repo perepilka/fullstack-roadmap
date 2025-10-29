@@ -14,8 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class TodoServiceTest {
@@ -118,7 +117,21 @@ public class TodoServiceTest {
         assertThat(updatedTodo.isCompleted()).isTrue();
 
         verify(todoRepository).save(existingTodo);
+    }
 
+    @Test
+    void whenUpdateTodo_andTodoDoesNotExist_thenThrowException() {
+        Long todoId = 1L;
+        UpdateTodoRequest updateTodoRequest = new UpdateTodoRequest();
+        updateTodoRequest.setTitle("Updated Title");
+        updateTodoRequest.setCompleted(true);
+
+        when(todoRepository.findById(todoId)).thenReturn(Optional.empty());
+
+        assertThrows(TodoNotFoundException.class, () ->
+                todoService.updateTodo(todoId, updateTodoRequest));
+
+        verify(todoRepository, never()).save(any(Todo.class));
     }
 
 }
