@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/todos")
@@ -26,11 +27,9 @@ public class TodoController {
      */
     @GetMapping("/{id}")
     public ResponseEntity<TodoDto> getTodoById(@PathVariable Long id){
-
         Todo todo = todoService.getTodoById(id);
 
         return ResponseEntity.ok(TodoDto.fromEntity(todo));
-
     }
 
     @PostMapping
@@ -44,6 +43,17 @@ public class TodoController {
                 .toUri();
 
         return ResponseEntity.created(location).body(TodoDto.fromEntity(savedTodo));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<TodoDto>> getAllTodos() {
+        List<Todo> todos = todoService.getAllTodos();
+
+        List<TodoDto> todoDtos = todos.stream()
+                .map(TodoDto::fromEntity)
+                .toList();
+
+        return ResponseEntity.ok(todoDtos);
     }
 
 }
