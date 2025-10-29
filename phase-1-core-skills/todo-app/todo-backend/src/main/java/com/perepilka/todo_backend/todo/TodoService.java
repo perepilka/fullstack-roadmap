@@ -49,4 +49,14 @@ public class TodoService {
         return todoRepository.findAll();
     }
 
+    public Todo updateTodo(Long id, UpdateTodoRequest updateTodoRequest) {
+        //throws exception if todo does not exist
+        Todo todoToUpdate = getTodoById(id);
+
+        todoToUpdate.setTitle(updateTodoRequest.getTitle());
+        todoToUpdate.setCompleted(updateTodoRequest.getCompleted());
+
+        return todoRepository.save(todoToUpdate);
+    }
+
 }
