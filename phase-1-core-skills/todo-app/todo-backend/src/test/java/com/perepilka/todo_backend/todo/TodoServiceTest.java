@@ -6,6 +6,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,6 +69,29 @@ public class TodoServiceTest {
         assertThat(createdTodo.getTitle()).isEqualTo("Todo Title");
 
         verify(todoRepository).save(any(Todo.class));
+    }
+
+    @Test
+    void whenGetTodos_thenReturnsListOfTodos() {
+
+        Todo todo1 = new Todo();
+        todo1.setId(1L);
+        todo1.setTitle("Todo 1");
+
+        Todo todo2 = new Todo();
+        todo2.setId(2L);
+        todo2.setTitle("Todo 2");
+
+        when(todoRepository.findAll()).thenReturn(Arrays.asList(todo1, todo2));
+
+        List<Todo> todos = todoService.gettAllTodos();
+
+        assertThat(todos).isNotNull();
+        assertThat(todos.size()).isEqualTo(2);
+        assertThat(todos.get(0).getTitle()).isEqualTo("Todo 1");
+
+        verify(todoRepository).findAll();
+
     }
 
 
