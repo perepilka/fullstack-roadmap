@@ -48,7 +48,6 @@ public class TodoServiceTest {
                 () -> {
                     todoService.getTodoById(404L);
                 });
-
     }
 
     @Test
@@ -91,9 +90,36 @@ public class TodoServiceTest {
         assertThat(todos.get(0).getTitle()).isEqualTo("Todo 1");
 
         verify(todoRepository).findAll();
-
     }
 
+    @Test
+    void whenUpdateTodo_andTodoExists_thenUpdatesAndReturnsTodo() {
+        Long todoId = 1L;
+        UpdateTodoRequest updateTodoRequest = new UpdateTodoRequest();
+        updateTodoRequest.setTitle("Updated Title");
+        updateTodoRequest.setCompleted(true);
+        Todo existingTodo = new Todo();
+        existingTodo.setId(todoId);
+        existingTodo.setTitle("Old Title");
+        existingTodo.setCompleted(false);
+
+        Todo savedTodo = new Todo();
+        savedTodo.setId(todoId);
+        savedTodo.setTitle("Updated Title");
+        savedTodo.setCompleted(true);
+
+        when(todoRepository.findById(todoId)).thenReturn(Optional.of(existingTodo));
+        when(todoRepository.save(any(Todo.class))).thenReturn(savedTodo);
+
+        Todo updatedTodo = todoService.updateTodo(todoId, updateTodoRequest);
+
+        assertThat(updatedTodo).isNotNull();
+        assertThat(updatedTodo.getTitle()).isEqualTo("Updated Title");
+        assertThat(updatedTodo.isCompleted()).isTrue();
+
+        verify(todoRepository).save(existingTodo);
+
+    }
 
 }
 
