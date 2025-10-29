@@ -69,6 +69,14 @@ public class TodoService {
         return todoRepository.save(todoToUpdate);
     }
 
+    /**
+     * Deletes a Todo entity by its ID.
+     * This method first ensures the Todo exists by retrieving it using its ID,
+     * and then deletes it from the repository.
+     *
+     * @param id the ID of the Todo to delete
+     * @throws TodoNotFoundException if the Todo with the specified ID does not exist
+     */
     public void deleteTodo(Long id) {
         getTodoById(id);
         todoRepository.deleteById(id);
