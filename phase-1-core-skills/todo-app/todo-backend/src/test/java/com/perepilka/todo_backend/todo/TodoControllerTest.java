@@ -11,7 +11,9 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -98,6 +100,31 @@ public class TodoControllerTest {
                         .content(objectMapper.writeValueAsString(createTodoRequest)))
                 .andExpect(status().isBadRequest()); // Expect HTTP 400
 
+    }
+
+    @Test
+    void whenGetAllTodos_ThenReturnAllTodos() throws Exception {
+
+        Todo todo1 = new Todo();
+        todo1.setId(1L);
+        todo1.setTitle("Todo 1");
+
+        Todo todo2 = new Todo();
+        todo2.setId(2L);
+        todo2.setTitle("Todo 2");
+
+        List<Todo> mockList = List.of(todo1, todo2);
+
+        when(todoService.getAllTodos()).thenReturn(mockList);
+
+        mockMvc.perform(get("/api/v1/todos"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].title").value("Todo 1"))
+                .andExpect(jsonPath("$[1].id").value(2L))
+                .andExpect(jsonPath("$[1].title").value("Todo 2"));
     }
 
 }
