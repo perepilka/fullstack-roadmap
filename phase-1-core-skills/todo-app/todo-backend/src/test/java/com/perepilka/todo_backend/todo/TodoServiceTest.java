@@ -84,7 +84,7 @@ public class TodoServiceTest {
 
         when(todoRepository.findAll()).thenReturn(Arrays.asList(todo1, todo2));
 
-        List<Todo> todos = todoService.gettAllTodos();
+        List<Todo> todos = todoService.getAllTodos();
 
         assertThat(todos).isNotNull();
         assertThat(todos.size()).isEqualTo(2);
