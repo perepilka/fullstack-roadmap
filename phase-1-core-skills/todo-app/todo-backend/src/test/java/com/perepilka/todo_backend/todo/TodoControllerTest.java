@@ -13,7 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -61,10 +61,14 @@ public class TodoControllerTest {
     @Test
     void whenGetTodoById_andTodoDoesNotExist_thenReturnsNotFound() throws Exception {
         long todoId = 404L;
+        String expectedErrorMessage = "Could not find todo with id: " + todoId;
         when(todoService.getTodoById(todoId)).thenThrow(new TodoNotFoundException(todoId));
 
         mockMvc.perform(get("/api/v1/todos/{id}", todoId))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.statusCode").value(404))
+                .andExpect(jsonPath("$.message").value(expectedErrorMessage))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 
     @Test
@@ -98,7 +102,10 @@ public class TodoControllerTest {
         mockMvc.perform(post("/api/v1/todos")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(createTodoRequest)))
-                .andExpect(status().isBadRequest()); // Expect HTTP 400
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.statusCode").value(400))
+                .andExpect(jsonPath("$.message").value("Title cannot be blank!")) // This comes from CreateTodoRequest
+                .andExpect(jsonPath("$.timestamp").exists());
 
     }
 
@@ -162,7 +169,13 @@ public class TodoControllerTest {
         mockMvc.perform(put("/api/v1/todos/{id}", todoId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(updateTodoRequest)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.statusCode").value(400))
+                .andExpect(jsonPath("$.message").value(
+                        anyOf(
+                                equalTo("Title cannot be blank!, Completed status cannot be null!"),
+                                equalTo("Completed status cannot be null!, Title cannot be blank!"))))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 
     @Test
@@ -190,13 +203,16 @@ public class TodoControllerTest {
     }
 
     @Test
-    void whenDeleteTodo_withInvalidRequest_thenReturnsNotFound() throws Exception {
+    void whenDeleteTodo_andTodoDoesNotExist_thenReturnsNotFound() throws Exception {
         Long todoId = 404L;
-
+        String expectedErrorMessage = "Could not find todo with id: " + todoId;
         doThrow(new TodoNotFoundException(todoId)).when(todoService).deleteTodo(todoId);
 
         mockMvc.perform(delete("/api/v1/todos/{id}", todoId))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.statusCode").value(404))
+                .andExpect(jsonPath("$.message").value(expectedErrorMessage))
+                .andExpect(jsonPath("$.timestamp").exists());
     }
 
 }
