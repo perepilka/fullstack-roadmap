@@ -172,9 +172,9 @@ public class TodoControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.statusCode").value(400))
                 .andExpect(jsonPath("$.message").value(
-                        allOf(
-                                containsString("Title cannot be blank!"),
-                                containsString("Completed status cannot be null!"))))
+                        anyOf(
+                                equalTo("Title cannot be blank!, Completed status cannot be null!"),
+                                equalTo("Completed status cannot be null!, Title cannot be blank!"))))
                 .andExpect(jsonPath("$.timestamp").exists());
     }
 
