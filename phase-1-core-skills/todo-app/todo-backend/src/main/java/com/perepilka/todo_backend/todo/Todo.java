@@ -1,5 +1,6 @@
 package com.perepilka.todo_backend.todo;
 
+import com.perepilka.todo_backend.user.AppUser;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -34,14 +35,11 @@ public class Todo {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public Todo() {
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private AppUser user;
 
-    public Todo(String title, boolean completed, LocalDateTime createdAt, LocalDateTime updatedAt) {
-        this.title = title;
-        this.completed = completed;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
+    public Todo() {
     }
 
     public Long getId() {
@@ -82,6 +80,14 @@ public class Todo {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public AppUser getUser() {
+        return user;
+    }
+
+    public void setUser(AppUser user) {
+        this.user = user;
     }
 
     @Override
