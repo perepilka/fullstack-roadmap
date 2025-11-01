@@ -1,5 +1,7 @@
 package com.perepilka.todo_backend.todo;
 
+import com.perepilka.todo_backend.user.AppUser;
+import com.perepilka.todo_backend.user.AppUserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,6 +23,8 @@ public class TodoServiceTest {
 
     @Mock
     private TodoRepository todoRepository;
+    @Mock
+    private AppUserRepository appUserRepository;
 
     @InjectMocks
     private TodoService todoService;
@@ -54,19 +58,28 @@ public class TodoServiceTest {
         CreateTodoRequest createTodoRequest = new CreateTodoRequest();
         createTodoRequest.setTitle("Todo Title");
 
+        AppUser mockUser = new AppUser();
+        mockUser.setId(1L);
+        mockUser.setUsername("testuser");
+
         Todo mockTodo = new Todo();
         mockTodo.setId(1L);
         mockTodo.setTitle("Todo Title");
+        mockTodo.setUser(mockUser);
 
         when(todoRepository.save(any(Todo.class))).thenReturn(mockTodo);
 
-        Todo createdTodo = todoService.createTodo(createTodoRequest);
+        Todo createdTodo = todoService.createTodo(createTodoRequest, mockUser);
 
         assertThat(createdTodo).isNotNull();
         assertThat(createdTodo.getId()).isEqualTo(1L);
         assertThat(createdTodo.getTitle()).isEqualTo("Todo Title");
+        assertThat(createdTodo.getUser().getId()).isEqualTo(mockUser.getId());
 
-        verify(todoRepository).save(any(Todo.class));
+        verify(todoRepository).save(argThat(todo ->
+            todo.getTitle().equals(createdTodo.getTitle()) &&
+            todo.getUser().getId().equals(createdTodo.getUser().getId())
+        ));
     }
 
     @Test
