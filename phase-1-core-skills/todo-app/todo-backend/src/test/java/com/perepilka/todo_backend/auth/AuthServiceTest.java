@@ -38,8 +38,9 @@ public class AuthServiceTest {
         when(passwordEncoder.encode("password123")).thenReturn(HASHED_PASSWORD);
 
         AppUser mockSavedUser = new AppUser();
+        mockSavedUser.setId(1L);
         mockSavedUser.setUsername("testuser");
-        mockSavedUser.setRole(HASHED_PASSWORD);
+        mockSavedUser.setPassword(HASHED_PASSWORD);
         mockSavedUser.setRole("ROLE_USER");
         when(appUserRepository.save(any(AppUser.class))).thenReturn(mockSavedUser);
 
