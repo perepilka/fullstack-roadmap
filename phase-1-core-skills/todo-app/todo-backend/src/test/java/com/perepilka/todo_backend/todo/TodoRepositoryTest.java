@@ -1,5 +1,7 @@
 package com.perepilka.todo_backend.todo;
 
+import com.perepilka.todo_backend.user.AppUser;
+import com.perepilka.todo_backend.user.AppUserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -32,13 +34,20 @@ public class TodoRepositoryTest {
 
     @Autowired
     private TodoRepository todoRepository;
+    @Autowired
+    private AppUserRepository appUserRepository;
 
     @Test
     void whenSaveTodo_thenFindById_returnsTodo() {
+        AppUser user = new AppUser();
+        user.setUsername("testuser");
+        user.setPassword("password");
+        user.setRole("ROLE_USER");
+        AppUser savedUser = appUserRepository.save(user);
 
         Todo newTodo = new Todo();
         newTodo.setTitle("Test Todo Item");
-
+        newTodo.setUser(savedUser);
         todoRepository.save(newTodo);
 
         Optional<Todo> foundTodo = todoRepository.findById(newTodo.getId());
@@ -47,6 +56,7 @@ public class TodoRepositoryTest {
         assertThat(foundTodo.get().getTitle()).isEqualTo("Test Todo Item");
         assertThat(foundTodo.get().getId()).isGreaterThan(0);
         assertThat(foundTodo.get().isCompleted()).isEqualTo(false);
+        assertThat(foundTodo.get().getUser().getId()).isEqualTo(savedUser.getId());
         assertThat(foundTodo.get().getCreatedAt()).isNotNull();
         assertThat(foundTodo.get().getUpdatedAt()).isNotNull();
 
