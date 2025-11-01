@@ -1,5 +1,7 @@
 package com.perepilka.todo_backend.todo;
 
+import com.perepilka.todo_backend.user.AppUser;
+import com.perepilka.todo_backend.user.AppUserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -8,9 +10,11 @@ import java.util.List;
 public class TodoService {
 
     private final TodoRepository todoRepository;
+    private final AppUserRepository appUserRepository;
 
-    TodoService(TodoRepository todoRepository) {
+    public TodoService(TodoRepository todoRepository, AppUserRepository appUserRepository) {
         this.todoRepository = todoRepository;
+        this.appUserRepository = appUserRepository;
     }
 
     /**
@@ -32,9 +36,10 @@ public class TodoService {
      * @param createTodoRequest request object containing data for the new todo (must provide a title)
      * @return the persisted Todo entity with any generated fields populated (e.g. id)
      */
-    public Todo createTodo(CreateTodoRequest createTodoRequest) {
+    public Todo createTodo(CreateTodoRequest createTodoRequest, AppUser appUser) {
         Todo todo = new Todo();
         todo.setTitle(createTodoRequest.getTitle());
+        todo.setUser(appUser);
         return todoRepository.save(todo);
     }
 
