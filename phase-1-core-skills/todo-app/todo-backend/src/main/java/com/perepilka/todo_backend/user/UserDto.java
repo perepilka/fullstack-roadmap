@@ -6,7 +6,7 @@ public class UserDto {
     private String username;
     private String role;
 
-    private static UserDto fromEntity(AppUser entity) {
+    public static UserDto fromEntity(AppUser entity) {
         UserDto dto = new UserDto();
         dto.setId(entity.getId());
         dto.setUsername(entity.getUsername());
