@@ -1,7 +1,6 @@
 package com.perepilka.todo_backend.auth;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.perepilka.todo_backend.todo.TodoService;
 import com.perepilka.todo_backend.user.AppUser;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,8 +81,6 @@ public class AuthControllerTest {
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.status").value(409))
         .andExpect(jsonPath("$.message").value("Username already exists: duplicate"));
-
-
     }
 
 
