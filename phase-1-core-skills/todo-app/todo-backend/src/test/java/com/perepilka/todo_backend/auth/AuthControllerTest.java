@@ -80,7 +80,7 @@ public class AuthControllerTest {
                 .content(objectMapper.writeValueAsString(registerRequest)))
                 .andExpect(status().isConflict())
                 .andExpect(jsonPath("$.statusCode").value(409))
-        .andExpect(jsonPath("$.message").value("Username already exists: duplicate"));
+        .andExpect(jsonPath("$.message").value("User with this username already exists: duplicate"));
     }
 
 
