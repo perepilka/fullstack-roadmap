@@ -65,7 +65,7 @@ public class AuthControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(registerRequest)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400));
+                .andExpect(jsonPath("$.statusCode").value(400));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class AuthControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(registerRequest)))
                 .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.statusCode").value(409))
         .andExpect(jsonPath("$.message").value("Username already exists: duplicate"));
     }
 
