@@ -1,5 +1,6 @@
 package com.perepilka.todo_backend.auth;
 
+import com.perepilka.todo_backend.jwt.JwtService;
 import com.perepilka.todo_backend.user.AppUser;
 import com.perepilka.todo_backend.user.AppUserRepository;
 import org.junit.jupiter.api.Test;
@@ -8,7 +9,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -24,6 +29,10 @@ public class AuthServiceTest {
     private AppUserRepository appUserRepository;
     @Mock
     private PasswordEncoder passwordEncoder;
+    @Mock
+    private AuthenticationManager authenticationManager;
+    @Mock
+    private JwtService jwtService;
 
     @InjectMocks
     private AuthService authService;
@@ -76,6 +85,34 @@ public class AuthServiceTest {
         assertThrows(UsernameAlreadyExistsException.class, () -> {
             authService.register(request);
         });
+    }
+
+    @Test
+    void whenLogin_withValidCredentials_thenReturnsAuthResponse() {
+        LoginRequest request = new LoginRequest();
+        request.setUsername("testuser");
+        request.setPassword("password123");
+
+        AppUser mockUser = new AppUser();
+        mockUser.setId(1L);
+        mockUser.setUsername("testuser");
+        mockUser.setRole("ROLE_USER");
+
+        String FAKE_TOKEN = "fake.jwt.token";
+
+        when(authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword())
+        )).thenReturn(null);
+
+        when(appUserRepository.findByUsername("testuser")).thenReturn(Optional.of(mockUser));
+
+        when(jwtService.generateToken(mockUser)).thenReturn(FAKE_TOKEN);
+
+        AuthResponse response = authService.login(request);
+
+        assertThat(response).isNotNull();
+        assertThat(response.getToken()).isEqualTo(FAKE_TOKEN);
+        assertThat(response.getUser().getUsername()).isEqualTo("testuser");
     }
 
 }
